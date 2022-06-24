@@ -1,8 +1,57 @@
 # mahas.js
 
-#List
+# List
 
-init
+html
+```
+<!-- tag id -->
+<div class="card" id="table_Sample">
+
+    <div class="card-header header-elements-inline">
+        <h5 class="card-title">Sample</h5>
+        <div class="header-elements">
+            <div class="list-icons">
+                <!-- open modal form -->
+                <a class="list-icons-item" data-action="plus" href="javascript:isetup_Sample.openModal('POST')"></a>
+                <!-- refresh table -->
+                <a class="list-icons-item" data-action="reload" href="javascript:itable_Sample.refresh()"></a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- form table to refresh -->
+    <form class="itable-form card-body">
+        <input type="hidden" class="itable-pagesize" value="20" />
+        <div class="row">
+          <div class="col-md-3">
+          
+             <!-- filter -->
+            <div class="form-group">
+              <label for="Filter">Filter</label>
+              <input type="text" id="Filter" data-itable-filter="Filter" placeholder="Filter" class="form-control" value="" />
+            </div>
+            
+          </div>
+        </div>
+        <input type="submit" class="d-none"/>
+    </form>
+    
+    <!-- table -->
+    <div class="datatable-scroll">
+        <table class="table table-hover dataTable table-xs table-striped">
+            <thead>
+                <tr class="bg-slate">
+                    <th class="sorting text-left" data-itable-sorting="0">Name</th>
+					<th class="text-center" style="width: 30px;">Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+```
+
+init js
 ```
 var itable_Sample = new iTable({
   id: 'table_Sample', // tag id
@@ -46,4 +95,7 @@ var itable_Sample = new iTable({
       }
   }
   });
+  
+  // refresh table
+  itable_Sample.refresh();
 ```
