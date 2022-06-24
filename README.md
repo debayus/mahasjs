@@ -3,6 +3,7 @@
 # List
 
 html
+
 ```
 <!-- tag id -->
 <div class="card" id="table_Sample">
@@ -52,6 +53,7 @@ html
 ```
 
 init js
+
 ```
 var itable_Sample = new iTable({
   id: 'table_Sample', // tag id
@@ -98,4 +100,67 @@ var itable_Sample = new iTable({
   
   // refresh table
   itable_Sample.refresh();
+```
+
+# Modal Form
+
+html
+
+```
+<!-- tag id -->
+<div id="modal_Sample" class="modal fade">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+	
+            <div class="modal-header bg-slate">
+                <h6 class="modal-title"><label class="itable-title-type"></label>Sample</h6>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+	    
+	    <!-- form -->
+            <form autocomplete="off">
+                <div class="modal-body">
+                    <div class="form-group d-none">
+		    <input type="hidden" id="input1" name="Id"/>
+		</div>
+		<div class="form-group">
+                    <label for="input2">Name</label>
+                    <input type="text" id="input2" name="Name" class="form-control text-left"/>
+		</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn bg-primary show-only-type-post show-only-type-put">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+```
+
+init js
+
+```
+isetup_Sample = new iSetup({
+    id: 'modal_Sample', // tag id
+    url : '/api/data', // url data GET, POST, PUT 
+    param: e => ({
+	Id: e.target['Id'].value,
+	model: {
+	    ...getModelFromForm(e.target, isetup_Sample),
+	}
+    }),
+    success: (r, t) => {
+	if (r.success) {
+	    $(t.id).modal('hide');
+	    
+	    // refresh table
+	    itable_Sample.refresh();
+	}
+    },
+    modalDataOnSuccess: (r, t) => {
+	const form = $(t.id).find('form')[0];
+
+	setFormFromModel(form, r.data, t);
+    },
+});
 ```
