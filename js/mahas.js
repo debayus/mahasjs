@@ -24,6 +24,7 @@
 // v2.5.9 triggerModels select2 bug
 // 2.5.10 isetup init ipainter update
 // 2.5.11 initHelper update bug
+// 2.5.12 mahas_modal_dialog open-modal bug
 
 const triggerModels = (isetup, modelKey) => {
     const model = isetup.models[modelKey];
@@ -1472,6 +1473,9 @@ const modalDialog = (status, headerText, bodyText, callback) => {
     $('body').append(html);
     $('#mahas_modal_dialog').on('hidden.bs.modal', e => {
         $('#mahas_modal_dialog').remove();
+        if ($('.modal.show').length > 0) {
+            $('body').addClass('modal-open');
+        }
     });
     if (typeof callback === 'function') {
         $('#mahas_modal_dialog .mahas-modal-dialog-yes').on('click', e => {
