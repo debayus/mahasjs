@@ -1,27 +1,27 @@
-// v2.2.4
-// v2.2.5 detail select2
-// v2.2.6 bug
-// v2.2.7 bug todatestring
-// v2.2.8 other ajax
-// v2.3.0 bug
-// v2.3.1 isetup stateDataOnSuccess
-// v2.3.2 itable delete
-// v2.3.3 select2 data & onchange input type file
-// v2.3.4 isGetData
-// v2.3.5 bug formula
-// v2.4.5 isetup update
-// v2.4.6 setFormFromModel
-// v2.4.7 idGenerator
-// v2.5.0 iPainter
-// v2.5.1 isValid
-// v2.5.2 initDetailTr
-// v2.5.3 formula
-// v2.5.4 stateDataOnSuccess return false
-// v2.5.5 select2 OtherParam isetup.select2OtherParam
-// v2.5.6 validURL iPainter.getSrc
-// v2.5.7 bug iPainter.getSrc
-// v2.5.8 filterAutoResetPageIndex
-// v2.5.9 triggerModels select2 bug
+// 2.2.4
+// 2.2.5 detail select2
+// 2.2.6 bug
+// 2.2.7 bug todatestring
+// 2.2.8 other ajax
+// 2.3.0 bug
+// 2.3.1 isetup stateDataOnSuccess
+// 2.3.2 itable delete
+// 2.3.3 select2 data & onchange input type file
+// 2.3.4 isGetData
+// 2.3.5 bug formula
+// 2.4.5 isetup update
+// 2.4.6 setFormFromModel
+// 2.4.7 idGenerator
+// 2.5.0 iPainter
+// 2.5.1 isValid
+// 2.5.2 initDetailTr
+// 2.5.3 formula
+// 2.5.4 stateDataOnSuccess return false
+// 2.5.5 select2 OtherParam isetup.select2OtherParam
+// 2.5.6 validURL iPainter.getSrc
+// 2.5.7 bug iPainter.getSrc
+// 2.5.8 filterAutoResetPageIndex
+// 2.5.9 triggerModels select2 bug
 // 2.5.10 isetup init ipainter update
 // 2.5.11 initHelper update bug
 // 2.5.12 mahas_modal_dialog open-modal bug
