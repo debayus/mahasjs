@@ -1,5 +1,6 @@
 /*
     v2.5.0 iPainter
+    v2.5.1 home-brand-label
 */
 
 .mahas-alert {
@@ -21,6 +22,11 @@
 [data-action=plus]:after {
     content: "\ed5a";
 }
+
+[data-action=filter]:after {
+    content: "\ee88";
+}
+
 
 #itable_loading {
     position: absolute;
@@ -121,7 +127,6 @@
     font-size: 14px;
     padding: 0;
     margin: 0;
-    color: white;
     cursor: pointer;
     font-weight: 600;
     line-height: normal;
