@@ -1,30 +1,32 @@
-// 2.2.4
-// 2.2.5 detail select2
-// 2.2.6 bug
-// 2.2.7 bug todatestring
-// 2.2.8 other ajax
-// 2.3.0 bug
-// 2.3.1 isetup stateDataOnSuccess
-// 2.3.2 itable delete
-// 2.3.3 select2 data & onchange input type file
-// 2.3.4 isGetData
-// 2.3.5 bug formula
-// 2.4.5 isetup update
-// 2.4.6 setFormFromModel
-// 2.4.7 idGenerator
-// 2.5.0 iPainter
-// 2.5.1 isValid
-// 2.5.2 initDetailTr
-// 2.5.3 formula
-// 2.5.4 stateDataOnSuccess return false
-// 2.5.5 select2 OtherParam isetup.select2OtherParam
-// 2.5.6 validURL iPainter.getSrc
-// 2.5.7 bug iPainter.getSrc
-// 2.5.8 filterAutoResetPageIndex
-// 2.5.9 triggerModels select2 bug
+// v2.2.4
+// v2.2.5 detail select2
+// v2.2.6 bug
+// v2.2.7 bug todatestring
+// v2.2.8 other ajax
+// v2.3.0 bug
+// v2.3.1 isetup stateDataOnSuccess
+// v2.3.2 itable delete
+// v2.3.3 select2 data & onchange input type file
+// v2.3.4 isGetData
+// v2.3.5 bug formula
+// v2.4.5 isetup update
+// v2.4.6 setFormFromModel
+// v2.4.7 idGenerator
+// v2.5.0 iPainter
+// v2.5.1 isValid
+// v2.5.2 initDetailTr
+// v2.5.3 formula
+// v2.5.4 stateDataOnSuccess return false
+// v2.5.5 select2 OtherParam isetup.select2OtherParam
+// v2.5.6 validURL iPainter.getSrc
+// v2.5.7 bug iPainter.getSrc
+// v2.5.8 filterAutoResetPageIndex
+// v2.5.9 triggerModels select2 bug
 // 2.5.10 isetup init ipainter update
 // 2.5.11 initHelper update bug
-// 2.5.12 mahas_modal_dialog open-modal bug
+// 2.6.0 .net core 6
+// 2.6.1 sidebar
+// 2.6.2 nav bar
 
 const triggerModels = (isetup, modelKey) => {
     const model = isetup.models[modelKey];
@@ -153,6 +155,10 @@ const mahasFormulaProcessJs = j => {
     });
 };
 
+const isLaravel = () => {
+    return typeof(framework) != 'undefined' && framework === 'laravel';
+};
+
 class iTable {
     constructor(opt = {}) {
         this.id = '#' + opt.id;
@@ -206,7 +212,7 @@ class iTable {
                     <i class="icon-warning22 text-warning display-1"></i>
                     <h3>Are you sure ?</h3>
                     <label>Data will be delete</label>
-                </div>   
+                </div>
             `
             , () => {
                 $.ajax({
@@ -214,11 +220,7 @@ class iTable {
                     type: 'DELETE',
                     data: param,
                     success: r => {
-                        if (r.success) {
-                            if (itable) itable.refresh();
-                        } else {
-                            alertError(r.message);
-                        }
+                        if (itable) itable.refresh();
                     },
                     error: xhr => {
                         alertError(xhr);
@@ -252,17 +254,23 @@ class iTable {
             });
         }
         const t = this;
+        const _ajaxData = {
+            orderBy: this.orderBy,
+            orderByType: this.orderByType ? 'ASC' : 'DESC',
+            pageSize: this.pageSize,
+            pageIndex: this.pageIndex,
+            filter: _filter,
+            ...(typeof this.otherData === 'function' ? this.otherData() : this.otherData || {})
+        };
+        if (isLaravel()) {
+            _ajaxData._token = $(t.id).find('form')[0]['_token']?.value;
+        } else {
+            _ajaxData.__RequestVerificationToken = $(t.id).find('form')[0]['__RequestVerificationToken']?.value;
+        }
         $.ajax({
             url: this.url,
             type: 'POST',
-            data: {
-                orderBy: this.orderBy,
-                orderByType: this.orderByType ? 'ASC' : 'DESC',
-                pageSize: this.pageSize,
-                pageIndex: this.pageIndex,
-                filter: _filter,
-                ...(typeof this.otherData === 'function' ? this.otherData() : this.otherData || {})
-            },
+            data: _ajaxData,
             success: (r) => {
                 if (typeof t.success === 'function') {
                     t.success(r, t);
@@ -295,14 +303,10 @@ class iTable {
                         });
                     }
                 }
-                if (r.success) {
-                    $(t.id).find('[data-itable-page]').on('click', e => {
-                        t.property({ pageIndex: $(e.target).data('itable-page') });
-                        t.refresh();
-                    });
-                } else {
-                    alertError(r.message);
-                }
+                $(t.id).find('[data-itable-page]').on('click', e => {
+                    t.property({ pageIndex: $(e.target).data('itable-page') });
+                    t.refresh();
+                });
             },
             error: (xhr) => {
                 alertError(xhr);
@@ -493,11 +497,7 @@ class iSetup {
                     url: jv.data('url'),
                     type: 'GET',
                     success: r => {
-                        if (!r.success) {
-                            alertError(r.message);
-                        } else {
-                            $(v).closest('.form-group').find('input[type="text"]').val(r.id);
-                        }
+                        $(v).closest('.form-group').find('input[type="text"]').val(r.id);
                     },
                     error: xhr => {
                         alertError(xhr);
@@ -525,7 +525,7 @@ class iSetup {
             if (isLoading()) return;
 
             if (typeof t.isValid === 'function') {
-                if (!this.isValid) return
+                if (!this.isValid(this)) return
             }
 
             $.ajax({
@@ -538,9 +538,6 @@ class iSetup {
                 success: r => {
                     if (typeof t.success === 'function') {
                         t.success(r, t);
-                    }
-                    if (!r.success) {
-                        alertError(r.message);
                     }
                 },
                 error: xhr => {
@@ -578,7 +575,7 @@ class iSetup {
             tid.find('form')[0].reset();
             tid.find('.table-detail tbody').html('');
             tid.find('form .open-reset').val('');
-            tid.find('form [type="hidden"]').val('');
+            tid.find('form [type="hidden"]:not([name="__RequestVerificationToken"],[name="_token"])').val('');
         }
         t.init();
 
@@ -591,14 +588,10 @@ class iSetup {
                 type: 'GET',
                 data: param,
                 success: r => {
-                    if (r.success) {
-                        if (typeof t.modalDataOnSuccess === 'function') {
-                            t.modalDataOnSuccess(r, t);
-                            t.init();
-                            $(t.id).modal({ backdrop: 'static' });
-                        }
-                    } else {
-                        alertError(r.message);
+                    if (typeof t.modalDataOnSuccess === 'function') {
+                        t.modalDataOnSuccess(r, t);
+                        t.init();
+                        $(t.id).modal({ backdrop: 'static' });
                     }
                     t.isGetData = false;
                 },
@@ -632,7 +625,7 @@ class iSetup {
             tid.find('form')[0].reset();
             tid.find('.table-detail tbody').html('');
             tid.find('form .open-reset').val('');
-            tid.find('form [type="hidden"]').val('');
+            tid.find('form [type="hidden"]:not([name="__RequestVerificationToken"],[name="_token"])').val('');
         }
         t.init();
 
@@ -644,14 +637,10 @@ class iSetup {
                 type: 'GET',
                 data: param,
                 success: r => {
-                    if (r.success) {
-                        if (typeof t.stateDataOnSuccess === 'function') {
-                            if (t.stateDataOnSuccess(r, t) != false) {
-                                t.init();
-                            }
+                    if (typeof t.stateDataOnSuccess === 'function') {
+                        if (t.stateDataOnSuccess(r, t) != false) {
+                            t.init();
                         }
-                    } else {
-                        alertError(r.message);
                     }
                     t.isGetData = false;
                 },
@@ -678,7 +667,7 @@ class iSetup {
                     <i class="icon-warning22 text-warning display-1"></i>
                     <h3>Are you sure ?</h3>
                     <label>Data will be delete</label>
-                </div>   
+                </div>
             `
             , () => {
                 $.ajax({
@@ -686,11 +675,7 @@ class iSetup {
                     type: 'DELETE',
                     data: param,
                     success: r => {
-                        if (r.success) {
-                            if (itable) itable.refresh();
-                        } else {
-                            alertError(r.message);
-                        }
+                        if (itable) itable.refresh();
                     },
                     error: xhr => {
                         alertError(xhr);
@@ -716,13 +701,9 @@ class iSetup {
             type: 'GET',
             data: param,
             success: r => {
-                if (r.success) {
-                    if (typeof this.dataOnSuccess === 'function') {
-                        this.dataOnSuccess(r, this);
-                        this.init();
-                    }
-                } else {
-                    alertError(r.message);
+                if (typeof this.dataOnSuccess === 'function') {
+                    this.dataOnSuccess(r, this);
+                    this.init();
                 }
             },
             error: xhr => {
@@ -835,7 +816,7 @@ class iPainter {
                                         <div class="input-group">
                                             <input type="text" min="1" max="100" class="form-control ipainter-text" placeholder="Text" value="${opt.text || '11'}">
                                             <div class="input-group-prepend">
-                                                <button type="button" class="btn bg-teal ipainter-text-button"><i class="icon-text-color"></i></button>
+                                                <button type="button" class="btn btn-teal ipainter-text-button"><i class="icon-text-color"></i></button>
                                             </div>
                                         </div>
                                     </div>
@@ -1073,27 +1054,33 @@ const mahasSelect2 = (t, url, param, otherParam) => {
             dataType: 'json', type: "POST", delay: 250,
             data: p => {
                 const _param = typeof param === 'function' ? param() : param;
-                return {
+                const _ajaxData = {
                     pageSize: 30,
                     pageIndex: p.page || 0,
                     filter: p.term,
                     ..._param
                 };
+                const _form = $(t).closest('form')[0];
+                if (_form) {
+                    if (isLaravel()) {
+                        _ajaxData._token = _form['_token']?.value;
+                    } else {
+                        _ajaxData.__RequestVerificationToken = _form['__RequestVerificationToken']?.value;
+                    }
+                }
+                return _ajaxData;
             },
             processResults: (data, params) => {
-                if (!data.success) alertError(data.Message);
-                else {
-                    params.page = data.pageIndex + 1;
-                    return {
-                        results: $.map(data.datas, (value, index) => {
-                            return {
-                                id: value.value,
-                                text: value.text,
-                                ...value
-                            }
-                        }), pagination: { more: ((data.pageIndex + 1) * 30) < data.totalCount }
-                    };
-                }
+                params.page = data.pageIndex + 1;
+                return {
+                    results: $.map(data.datas, (value, index) => {
+                        return {
+                            id: value.value,
+                            text: value.text,
+                            ...value
+                        }
+                    }), pagination: { more: ((data.pageIndex + 1) * 30) < data.totalCount }
+                };
             }, cache: true
         },
         allowClear: true,
@@ -1194,7 +1181,8 @@ const setFormFromModel = (form, model, isetup) => {
             return;
         } else if (input.nodeName === 'SELECT' && $(input).hasClass('select2-hidden-accessible')) {
             if (v) {
-                $(input).append(`<option value="${v}">${model[`${key}_Text`]}<option>`);
+                const _customText = $(input).data('text');
+                $(input).append(`<option value="${v}">${model[_customText ? _customText : `${key}_Text`]}<option>`);
                 if (model[`${key}_Object`]) {
                     $(input).find(`option[value="${v}"]`).data('object', model[`${key}_Object`]);
                 }
@@ -1249,18 +1237,21 @@ const loading = isLoading => {
     }
 };
 
-const alertError = xhr => {
-    if (xhr) {
-        if (xhr.responseText) {
-            showAlert(xhr.responseText, 'warning');
-        } else if (xhr.statusText) {
-            showAlert(xhr.statusText, 'warning');
-        } else {
-            showAlert(xhr, 'warning');
-        }
-    } else {
-        showAlert('Internal Server Error', 'warning');
+const objectToString = obj => {
+    if (typeof obj === 'string' && jsonStringIsValid(obj)) {
+        obj = JSON.parse(obj);
     }
+    if (typeof obj === 'object') {
+        return Object.keys(obj).map(key => Array.isArray(obj[key]) ? obj[key].join('\r') : obj[key]).join('\r');
+    } else {
+        return obj;
+    }
+};
+
+const alertError = xhr => {
+    let messate = xhr?.responseJSON?.title || xhr?.responseText || xhr?.statusText || 'Internal Server Error';
+    messate = objectToString(messate);
+    showAlert(messate, 'warning');
 };
 
 const validURL = str => {
@@ -1430,11 +1421,14 @@ const clearCookie = name => {
 };
 
 const initMahas = () => {
-    if ($('.sidebar-main-toggle').length > 0) {
-        $('.sidebar-main-toggle').on('click', () => {
-            setCookie('sidebar', $('body').hasClass('sidebar-xs').toString(), 360);
+    if (getCookie('sidebar') === 'true') {
+        $('.sidebar-main-resize').trigger('click');
+    }
+    if ($('.sidebar-main-resize').length > 0) {
+        $('.sidebar-main-resize').on('click', () => {
+            setCookie('sidebar', $('.sidebar-main').hasClass('sidebar-main-resized').toString(), 360);
         });
-        let li = $('.sidebar.sidebar-main li a[href="' + window.location.pathname + '"]').parent('li');
+        let li = $('.sidebar.sidebar-main li a[href="' + window.location.pathname + '"]').parent('.nav-item');
         li.find('.nav-link').addClass('active');
         let parent = li.closest('.nav-item-submenu');
         if (parent.length > 0) {
@@ -1462,7 +1456,7 @@ const modalDialog = (status, headerText, bodyText, callback) => {
             `
                     <div class="modal-footer">
                         <button type="button" data-dismiss="modal" class="btn btn-link">Cancel</button>
-                        <button type="button" class="btn bg-${status || 'primary'} mahas-modal-dialog-yes">Yes</button>
+                        <button type="button" class="btn btn-${status || 'primary'} mahas-modal-dialog-yes">Yes</button>
                     </div>
                     ` : ''}
                 </div>
@@ -1473,9 +1467,6 @@ const modalDialog = (status, headerText, bodyText, callback) => {
     $('body').append(html);
     $('#mahas_modal_dialog').on('hidden.bs.modal', e => {
         $('#mahas_modal_dialog').remove();
-        if ($('.modal.show').length > 0) {
-            $('body').addClass('modal-open');
-        }
     });
     if (typeof callback === 'function') {
         $('#mahas_modal_dialog .mahas-modal-dialog-yes').on('click', e => {
@@ -1500,7 +1491,7 @@ const passwordDialog = callback => {
                     </div>
                     <div class="modal-footer">
                         <button type="button" data-dismiss="modal" class="btn btn-link">Cancel</button>
-                        <button type="button" class="btn bg-primary mahas-modal-password-yes">Yes</button>
+                        <button type="button" class="btn btn-primary mahas-modal-password-yes">Yes</button>
                     </div>
                 </div>
             </div>
