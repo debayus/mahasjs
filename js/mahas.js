@@ -27,6 +27,7 @@
 // 2.6.0 .net core 6
 // 2.6.1 sidebar
 // 2.6.2 nav bar
+// 2.6.3 timeToView
 
 const triggerModels = (isetup, modelKey) => {
     const model = isetup.models[modelKey];
@@ -1543,7 +1544,15 @@ const idGenerator = () => {
         return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
     };
     return `${S4()}${S4()}${S4()}${S4()}${S4()}${S4()}`;
-}
+};
+
+const timeToView = (time) => {
+    var sTime = time.split(':');
+    if (sTime.length > 2) {
+        return [sTime[0], sTime[1]].join(':');
+    }
+    return time;
+};
 
 document.addEventListener("DOMContentLoaded", function (event) {
     initMahas();
