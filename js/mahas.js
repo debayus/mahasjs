@@ -1547,7 +1547,7 @@ const idGenerator = () => {
 };
 
 const timeToView = (time) => {
-    var sTime = time.split(':');
+    var sTime = (time || '').split(':');
     if (sTime.length > 2) {
         return [sTime[0], sTime[1]].join(':');
     }
