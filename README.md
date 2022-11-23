@@ -1,6 +1,9 @@
 # mahas.js
 
-# List
+Help create front end pagination lists, setup forms and more.
+
+## Sample Code
+### List
 
 html
 
@@ -102,7 +105,7 @@ var itable_Sample = new iTable({
   itable_Sample.refresh();
 ```
 
-# Modal Form
+### Modal Form
 
 html
 
